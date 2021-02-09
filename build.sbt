@@ -44,11 +44,12 @@ publishTo := {
   val repo = "http://192.168.178.127:8082/"
   if (isSnapshot.value) {
     //    Some("snapshots" at repo + "content/repositories/snapshots")
-    Some("releases" at repo + "artifactory/snapshots" withAllowInsecureProtocol true)
+    Some(Resolver.url("snapshots", url(repo + "artifactory/snapshots"))(Resolver.ivyStylePatterns) withAllowInsecureProtocol (true))
   }
   else {
     //    Some("releases" at repo + "content/repositories/releases")
-    Some("releases" at repo + "artifactory/releases" withAllowInsecureProtocol true)
+    //    Some("releases" at repo + "artifactory/releases" withAllowInsecureProtocol true)
+    Some(Resolver.url("snapshots", url(repo + "artifactory/snapshots"))(Resolver.ivyStylePatterns) withAllowInsecureProtocol (true))
   }
 }
 
