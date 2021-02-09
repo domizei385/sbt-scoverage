@@ -10,7 +10,7 @@ resolvers ++= {
   if (isSnapshot.value) Seq(Resolver.sonatypeRepo("snapshots")) else Nil
 }
 
-libraryDependencies += "org.scoverage" % "scalac-scoverage-plugin_2.12" % "1.4.2"
+libraryDependencies += "org.scoverage" %% "scalac-scoverage-plugin" % "1.4.2"
 
 publishMavenStyle := true
 
@@ -79,6 +79,6 @@ pomExtra := {
     </developers>
 }
 
-crossSbtVersions := Vector("1.2.8", "1.4.7")
+sbtVersion := "1.4.7"
 
 scalariformAutoformat := false
