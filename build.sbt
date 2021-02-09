@@ -39,12 +39,15 @@ releaseProcess := Seq[ReleaseStep](
 releaseCrossBuild := false
 
 publishTo := {
-  val repo = "https://maven.zalando.net/"
+//  val repo = "https://maven.zalando.net/"
+  val repo = "http://localhost:8082"
   if (isSnapshot.value) {
-    Some("snapshots" at repo + "content/repositories/snapshots")
+//    Some("snapshots" at repo + "content/repositories/snapshots")
+    Some("releases" at repo + "artifactory/snapshots")
   }
   else {
-    Some("releases" at repo + "content/repositories/releases")
+    //    Some("releases" at repo + "content/repositories/releases")
+        Some("releases" at repo + "artifactory/releases")
   }
 }
 
