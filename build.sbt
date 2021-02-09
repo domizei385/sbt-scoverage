@@ -21,7 +21,8 @@ scriptedLaunchOpts ++= Seq(
   "-Dplugin.version=" + version.value
 )
 
-import ReleaseTransformations._
+import sbtrelease.ReleasePlugin.autoImport.ReleaseTransformations._
+
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
@@ -39,15 +40,15 @@ releaseProcess := Seq[ReleaseStep](
 releaseCrossBuild := false
 
 publishTo := {
-//  val repo = "https://maven.zalando.net/"
-  val repo = "http://localhost:8082"
+  //  val repo = "https://maven.zalando.net/"
+  val repo = "http://192.168.178.127:8082/"
   if (isSnapshot.value) {
-//    Some("snapshots" at repo + "content/repositories/snapshots")
-    Some("releases" at repo + "artifactory/snapshots")
+    //    Some("snapshots" at repo + "content/repositories/snapshots")
+    Some("releases" at repo + "artifactory/snapshots" withAllowInsecureProtocol true)
   }
   else {
     //    Some("releases" at repo + "content/repositories/releases")
-        Some("releases" at repo + "artifactory/releases")
+    Some("releases" at repo + "artifactory/releases" withAllowInsecureProtocol true)
   }
 }
 
