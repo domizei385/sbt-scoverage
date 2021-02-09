@@ -80,5 +80,6 @@ pomExtra := {
 }
 
 sbtVersion := "1.4.7"
+crossScalaVersions := Seq("2.12.13", "2.13.4")
 
 scalariformAutoformat := false

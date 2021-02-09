@@ -56,13 +56,13 @@ object ScoverageSbtPlugin extends AutoPlugin {
   private lazy val coverageSettings = Seq(
     libraryDependencies ++= {
       if (coverageEnabled.value) {
-        def name = coverageScalacPluginArtifactName.value + "_2.12"
+        def name = coverageScalacPluginArtifactName.value
         Seq(
           // We only add for "compile" because of macros. This setting could be optimed to just "test" if the handling
           // of macro coverage was improved.
-          (OrgScoverage % scalacRuntime(name, libraryDependencies.value) % coverageScalacPluginVersion.value),
+          (OrgScoverage %% scalacRuntime(name, libraryDependencies.value) % coverageScalacPluginVersion.value),
           // We don't want to instrument the test code itself, nor add to a pom when published with coverage enabled.
-          (OrgScoverage % name % coverageScalacPluginVersion.value % ScoveragePluginConfig.name)
+          (OrgScoverage %% name % coverageScalacPluginVersion.value % ScoveragePluginConfig.name)
         )
       } else
         Nil
