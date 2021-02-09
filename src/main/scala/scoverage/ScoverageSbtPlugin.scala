@@ -3,6 +3,7 @@ package scoverage
 import sbt.Keys._
 import sbt._
 import sbt.plugins.JvmPlugin
+import scoverage.ScoverageKeys.coverageScalacPluginVersion
 import scoverage.report.{CoberturaXmlWriter, CoverageAggregator, ScoverageHtmlWriter, ScoverageXmlWriter}
 
 object ScoverageSbtPlugin extends AutoPlugin {
@@ -36,7 +37,8 @@ object ScoverageSbtPlugin extends AutoPlugin {
     coverageOutputDebug := false,
     coverageCleanSubprojectFiles := true,
     coverageOutputTeamCity := false,
-    coverageScalacPluginVersion := DefaultScoverageVersion
+    coverageScalacPluginVersion := DefaultScoverageVersion,
+    coverageScalacPluginArtifactName := ScalacPluginArtifact
   )
 
   override def buildSettings: Seq[Setting[_]] = super.buildSettings ++
@@ -52,16 +54,17 @@ object ScoverageSbtPlugin extends AutoPlugin {
   ) ++ coverageSettings ++ scalacSettings
 
   private lazy val coverageSettings = Seq(
-    libraryDependencies  ++= {
-      if (coverageEnabled.value)
+    libraryDependencies ++= {
+      if (coverageEnabled.value) {
+        def name = coverageScalacPluginArtifactName.value
         Seq(
           // We only add for "compile" because of macros. This setting could be optimed to just "test" if the handling
           // of macro coverage was improved.
-          (OrgScoverage %% (scalacRuntime(libraryDependencies.value)) % coverageScalacPluginVersion.value).cross(CrossVersion.full),
+          (OrgScoverage % scalacRuntime(name, libraryDependencies.value) % coverageScalacPluginVersion.value),
           // We don't want to instrument the test code itself, nor add to a pom when published with coverage enabled.
-          (OrgScoverage %% ScalacPluginArtifact % coverageScalacPluginVersion.value % ScoveragePluginConfig.name).cross(CrossVersion.full)
+          (OrgScoverage % name % coverageScalacPluginVersion.value % ScoveragePluginConfig.name)
         )
-      else
+      } else
         Nil
     }
   )
@@ -89,8 +92,8 @@ object ScoverageSbtPlugin extends AutoPlugin {
     }
   )
 
-  private def scalacRuntime(deps: Seq[ModuleID]): String = {
-    ScalacRuntimeArtifact + optionalScalaJsSuffix(deps)
+  private def scalacRuntime(name: String, deps: Seq[ModuleID]): String = {
+    name + optionalScalaJsSuffix(deps)
   }
 
   // returns "_sjs$sjsVersion" for Scala.js projects or "" otherwise
