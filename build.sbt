@@ -10,7 +10,7 @@ resolvers ++= {
   if (isSnapshot.value) Seq(Resolver.sonatypeRepo("snapshots")) else Nil
 }
 
-libraryDependencies += "org.scoverage" %% "scalac-scoverage-plugin" % "1.4.0"
+libraryDependencies += "org.scoverage" %% "scalac-scoverage-plugin" % "1.4.2"
 
 publishMavenStyle := true
 
@@ -39,10 +39,13 @@ releaseProcess := Seq[ReleaseStep](
 releaseCrossBuild := false
 
 publishTo := {
-  if (isSnapshot.value)
-    Some("snapshots" at "https://oss.sonatype.org/content/repositories/snapshots")
-  else
-    Some("releases" at "https://oss.sonatype.org/service/local/staging/deploy/maven2")
+  val repo = "https://maven.zalando.net/"
+  if (isSnapshot.value) {
+    Some("snapshots" at repo + "content/repositories/snapshots")
+  }
+  else {
+    Some("releases" at repo + "content/repositories/releases")
+  }
 }
 
 pomExtra := {
@@ -72,6 +75,6 @@ pomExtra := {
     </developers>
 }
 
-crossSbtVersions := Vector("0.13.18", "1.2.8")
+crossSbtVersions := Vector("1.2.8", "1.4.7")
 
 scalariformAutoformat := false
