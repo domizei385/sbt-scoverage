@@ -15,7 +15,7 @@ lazy val cross = CrossProject("sjstest", file("sjstest"))(JVMPlatform, JSPlatfor
 lazy val crossJS = cross.js
 lazy val crossJVM = cross.jvm
 
-resolvers in ThisBuild ++= {
+ThisBuild / resolvers ++= {
   if (sys.props.get("plugin.version").map(_.endsWith("-SNAPSHOT")).getOrElse(false)) Seq(Resolver.sonatypeRepo("snapshots"))
   else Seq.empty
 }

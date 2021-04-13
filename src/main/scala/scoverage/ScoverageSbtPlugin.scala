@@ -35,22 +35,21 @@ object ScoverageSbtPlugin extends AutoPlugin {
     coverageOutputHTML := true,
     coverageOutputCobertura := true,
     coverageOutputDebug := false,
-    coverageCleanSubprojectFiles := true,
     coverageOutputTeamCity := false,
     coverageScalacPluginVersion := DefaultScoverageVersion,
     coverageScalacPluginArtifactName := ScalacPluginArtifact
   )
 
   override def buildSettings: Seq[Setting[_]] = super.buildSettings ++
-    addCommandAlias("coverage", ";set coverageEnabled in ThisBuild := true") ++
-    addCommandAlias("coverageOn", ";set coverageEnabled in ThisBuild := true") ++
-    addCommandAlias("coverageOff", ";set coverageEnabled in ThisBuild := false")
+    addCommandAlias("coverage", ";set ThisBuild / coverageEnabled := true") ++
+    addCommandAlias("coverageOn", ";set ThisBuild / coverageEnabled := true") ++
+    addCommandAlias("coverageOff", ";set ThisBuild / coverageEnabled := false")
 
   override def projectSettings: Seq[Setting[_]] = Seq(
     ivyConfigurations += ScoveragePluginConfig,
     coverageReport := coverageReport0.value,
     coverageAggregate := coverageAggregate0.value,
-    aggregate in coverageAggregate := false
+    coverageAggregate / aggregate := false
   ) ++ coverageSettings ++ scalacSettings
 
   private lazy val coverageSettings = Seq(
@@ -70,7 +69,7 @@ object ScoverageSbtPlugin extends AutoPlugin {
   )
 
   private lazy val scalacSettings = Seq(
-    scalacOptions in(Compile, compile) ++= {
+    Compile / compile / scalacOptions ++= {
       val updateReport = update.value
       if (coverageEnabled.value) {
         val scoverageDeps: Seq[File] = updateReport matching configurationFilter(ScoveragePluginConfig.name)
@@ -116,14 +115,14 @@ object ScoverageSbtPlugin extends AutoPlugin {
       case Some(cov) =>
         writeReports(
           target,
-          (sourceDirectories in Compile).value,
+          (Compile / sourceDirectories).value,
           cov,
           coverageOutputCobertura.value,
           coverageOutputXML.value,
           coverageOutputHTML.value,
           coverageOutputDebug.value,
           coverageOutputTeamCity.value,
-          sourceEncoding((scalacOptions in (Compile)).value),
+          sourceEncoding((Compile / scalacOptions).value),
           log)
 
         checkCoverage(cov, log, coverageMinimum.value, coverageFailOnMinimum.value)
@@ -147,7 +146,7 @@ object ScoverageSbtPlugin extends AutoPlugin {
           coverageOutputHTML.value,
           coverageOutputDebug.value,
           coverageOutputTeamCity.value,
-          sourceEncoding((scalacOptions in (Compile)).value),
+          sourceEncoding((Compile / scalacOptions).value),
           log)
         val cfmt = cov.statementCoverageFormatted
         log.info(s"Aggregation complete. Coverage was [$cfmt]")
@@ -219,7 +218,7 @@ object ScoverageSbtPlugin extends AutoPlugin {
 
     // Create the coverage report for teamcity (HTML files)
     if (createCoverageZip)
-      IO.zip(Path.allSubpaths(reportDir), crossTarget / "coverage.zip")
+      IO.zip(Path.allSubpaths(reportDir), crossTarget / "coverage.zip", None)
   }
 
   private def loadCoverage(crossTarget: File, log: Logger): Option[Coverage] = {

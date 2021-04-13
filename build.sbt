@@ -14,7 +14,7 @@ libraryDependencies += "org.scoverage" %% "scalac-scoverage-plugin" % "1.4.2"
 
 publishMavenStyle := true
 
-publishArtifact in Test := false
+Test / publishArtifact := false
 
 scriptedLaunchOpts ++= Seq(
   "-Xmx1024M",
@@ -40,16 +40,10 @@ releaseProcess := Seq[ReleaseStep](
 releaseCrossBuild := false
 
 publishTo := {
-  //  val repo = "https://maven.zalando.net/"
-  val repo = "http://192.168.178.127:8082/"
-  if (isSnapshot.value) {
-    //    Some("snapshots" at repo + "content/repositories/snapshots")
-    Some(Resolver.url("snapshots", url(repo + "artifactory/snapshots")) withAllowInsecureProtocol (true))
-  }
-  else {
-    //    Some("releases" at repo + "content/repositories/releases")
-    Some(Resolver.url("releases", url(repo + "artifactory/releases")) withAllowInsecureProtocol (true))
-  }
+  //val repo = "https://maven.zalando.net/repository/"
+  val repo = "http://192.168.178.127:8082/artifactory/"
+  if (isSnapshot.value) Some(Resolver.url("snapshots", url(repo + "snapshots")).withAllowInsecureProtocol(true))
+  else Some(Resolver.url("releases", url(repo + "releases")).withAllowInsecureProtocol(true))
 }
 
 pomExtra := {
@@ -79,8 +73,8 @@ pomExtra := {
     </developers>
 }
 
-sbtVersion := "1.4.7"
-scalaVersion := "2.12.8"
-crossScalaVersions := Seq("2.12.8", "2.13.4")
+sbtVersion := "1.5.0"
+scalaVersion := "2.12.13"
+crossScalaVersions := Seq(scalaVersion.value, "2.13.5")
 
 scalariformAutoformat := false
